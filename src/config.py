@@ -1,9 +1,14 @@
 # 目录配置
 DATA_DIR = "data"
-OUTPUT_DIR = "outputs"
-DOWNLOAD_DIR = "bilibili_video"
-AUDIO_DIR = "audio"
-TRANSCRIPT_DIR = f"{OUTPUT_DIR}/transcripts"
+OUTPUT_DIR = "output"
+DOWNLOAD_DIR = "output/tmp/videos"
+AUDIO_DIR = "output/tmp/audio"
+TRANSCRIPT_DIR = f"{OUTPUT_DIR}/result/transcripts"
+THUMBNAIL_DIR = f"{OUTPUT_DIR}/result/thumbnails"
+META_DIR = f"{OUTPUT_DIR}/meta"
+
+# 下载工具
+DOWNLOAD_TOOL = "yt-dlp"  # 可选: "api", "you-get", "yt-dlp"
 
 # 转录配置
 DEFAULT_ENGINE = "whisper"
