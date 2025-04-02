@@ -175,4 +175,8 @@ outputs
 outputs/
 
 # Executable files
-*.exe
+# *.exe
+
+lib
+
+output

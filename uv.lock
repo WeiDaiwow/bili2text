@@ -206,6 +206,7 @@ dependencies = [
     { name = "requests" },
     { name = "ttkbootstrap" },
     { name = "you-get" },
+    { name = "yt-dlp" },
 ]
 
 [package.metadata]
@@ -216,6 +217,7 @@ requires-dist = [
     { name = "requests", specifier = ">=2.32.3" },
     { name = "ttkbootstrap", specifier = ">=1.12.0" },
     { name = "you-get", specifier = ">=0.4.1743" },
+    { name = "yt-dlp", specifier = ">=2025.3.31" },
 ]
 
 [[package]]
@@ -418,4 +420,13 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/2d/85/f4a22b842bc0e0f57dc56ae54266dbc451547cee90bae9480131100ad92a/you_get-0.4.1743.tar.gz", hash = "sha256:cbc1250d577246ec9d422cef113882844c80d8729f32d3183a5fa76648a20741", size = 156416 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/a0/21/cdb541f0c6b9ab827f553c95c4539f2e58c6f9b6508aede0c8488e3ed026/you_get-0.4.1743-py3-none-any.whl", hash = "sha256:9f8968769772d3b50e0b38f33f119a4c0d5708ecfe0eeacee950661523b2ccf7", size = 189588 },
+]
+
+[[package]]
+name = "yt-dlp"
+version = "2025.3.31"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/a2/11/333d16f88b1515d4c601e1dfbf1028e6798f0b2a8ff1dc5aaa7b797aa9e8/yt_dlp-2025.3.31.tar.gz", hash = "sha256:1bfe0e660d1a70a09e27b2d58f92e30b1e2e362cc487829f2f824346ae49fb91", size = 2967466 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/a8/bf/7b0affb8f163376309696cfd1c677818fa0969fbb9d88225087208799afe/yt_dlp-2025.3.31-py3-none-any.whl", hash = "sha256:8ecb3aa218a3bebe431119f513a8972b9b9d992edf67168c00ab92329a03baec", size = 3226021 },
 ]
