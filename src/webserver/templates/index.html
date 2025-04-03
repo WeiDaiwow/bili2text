@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bili2Text - 视频转录工具</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- 自定义样式 -->
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        /* 预加载样式 */
+        .loader {
+            border-top-color: #3498db;
+            -webkit-animation: spinner 1.5s linear infinite;
+            animation: spinner 1.5s linear infinite;
+        }
+        @-webkit-keyframes spinner {
+            0% { -webkit-transform: rotate(0deg); }
+            100% { -webkit-transform: rotate(360deg); }
+        }
+        @keyframes spinner {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- 顶部导航栏 -->
+    <nav class="bg-white shadow-md">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-2">
+                    <img src="/static/img/logo.png" alt="Bili2Text Logo" class="h-8" id="logo-img">
+                    <span class="text-xl font-bold text-gray-800">Bili2Text</span>
+                </div>
+                <div class="flex space-x-4">
+                    <a href="#" class="nav-link text-gray-600 hover:text-blue-500 transition-colors">首页</a>
+                    <a href="#transcriptions" class="nav-link text-gray-600 hover:text-blue-500 transition-colors">转录列表</a>
+                    <a href="#about" class="nav-link text-gray-600 hover:text-blue-500 transition-colors">关于</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主要内容区域 - 将通过JavaScript填充 -->
+    <main id="app-container" class="container mx-auto px-4 py-8">
+        <!-- 页面内容将在这里动态加载 -->
+        <div class="loader-container flex justify-center items-center h-64">
+            <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12"></div>
+        </div>
+    </main>
+
+    <!-- 页面模板 - 通过JavaScript隐藏/显示 -->
+    <!-- 首页模板 -->
+    <template id="home-template">
+        <div class="home-page">
+            <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+                <h1 class="text-2xl font-bold text-gray-800 mb-4">欢迎使用 Bili2Text</h1>
+                <p class="text-gray-600 mb-6">
+                    Bili2Text 是一款强大的B站视频转录工具，能够自动下载B站视频并转录为文字稿件。
+                    只需输入视频的BV号，即可开始转录过程。
+                </p>
+                
+                <div class="bg-blue-50 rounded-lg p-6 border border-blue-100">
+                    <h2 class="text-xl font-semibold text-gray-700 mb-4">开始转录</h2>
+                    <form id="transcribe-form" class="space-y-4">
+                        <div>
+                            <label for="bv-input" class="block text-sm font-medium text-gray-700 mb-1">视频BV号</label>
+                            <input type="text" id="bv-input" name="bv_number" placeholder="请输入BV号，例如: BV1xx411c7mD" 
+                                class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        
+                        <div>
+                            <label for="engine-select" class="block text-sm font-medium text-gray-700 mb-1">转录引擎</label>
+                            <select id="engine-select" name="engine" 
+                                class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="whisper">Whisper</option>
+                                <option value="xunfei">讯飞</option>
+                            </select>
+                        </div>
+                        
+                        <div id="whisper-options">
+                            <label for="model-select" class="block text-sm font-medium text-gray-700 mb-1">Whisper模型</label>
+                            <select id="model-select" name="model_size" 
+                                class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="tiny">Tiny (最快)</option>
+                                <option value="base">Base (快速)</option>
+                                <option value="small" selected>Small (平衡)</option>
+                                <option value="medium">Medium (精确)</option>
+                                <option value="large">Large (最精确)</option>
+                            </select>
+                        </div>
+                        
+                        <button type="submit" 
+                            class="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md transition-colors">
+                            开始转录
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">最近转录记录</h2>
+                <div id="recent-transcriptions" class="space-y-4">
+                    <div class="loader-container flex justify-center items-center h-32">
+                        <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-10 w-10"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- 转录列表模板 -->
+    <template id="transcriptions-template">
+        <div class="transcriptions-page">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h1 class="text-2xl font-bold text-gray-800">转录列表</h1>
+                    
+                    <div class="flex space-x-2">
+                        <div class="relative">
+                            <input type="text" id="search-input" placeholder="搜索..." 
+                                class="px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <span class="material-icons absolute right-3 top-2 text-gray-400">search</span>
+                        </div>
+                        
+                        <div class="relative">
+                            <select id="tag-filter" 
+                                class="px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none pr-10">
+                                <option value="">所有标签</option>
+                                <!-- 标签选项将通过JavaScript填充 -->
+                            </select>
+                            <span class="material-icons absolute right-3 top-2 text-gray-400 pointer-events-none">expand_more</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="transcriptions-list" class="space-y-4">
+                    <div class="loader-container flex justify-center items-center h-64">
+                        <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12"></div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-between items-center mt-6">
+                    <span id="showing-results" class="text-sm text-gray-500">显示 1-10 / 0 结果</span>
+                    
+                    <div class="pagination flex space-x-1">
+                        <button id="prev-page" class="px-3 py-1 rounded-md border text-gray-600 hover:bg-gray-100 disabled:opacity-50" disabled>
+                            <span class="material-icons text-sm">chevron_left</span>
+                        </button>
+                        <div id="pagination-numbers" class="flex space-x-1">
+                            <!-- 分页数字将通过JavaScript填充 -->
+                        </div>
+                        <button id="next-page" class="px-3 py-1 rounded-md border text-gray-600 hover:bg-gray-100 disabled:opacity-50" disabled>
+                            <span class="material-icons text-sm">chevron_right</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- 转录详情模板 -->
+    <template id="detail-template">
+        <div class="detail-page">
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <div class="flex items-start">
+                    <div class="mr-6">
+                        <img id="video-thumbnail" src="" alt="视频缩略图" class="rounded-md w-48 h-auto">
+                    </div>
+                    <div class="flex-1">
+                        <h1 id="video-title" class="text-2xl font-bold text-gray-800 mb-2"></h1>
+                        <div class="flex items-center text-gray-600 mb-4">
+                            <span id="video-author" class="mr-4"></span>
+                            <span id="video-duration" class="mr-4"></span>
+                            <a id="video-link" href="#" target="_blank" class="text-blue-500 hover:underline flex items-center">
+                                <span class="material-icons text-sm mr-1">open_in_new</span>查看原视频
+                            </a>
+                        </div>
+                        <div id="video-tags" class="flex flex-wrap gap-2 mb-4">
+                            <!-- 标签将通过JavaScript填充 -->
+                        </div>
+                        <div class="flex space-x-2">
+                            <div class="relative inline-block" id="add-tag-container">
+                                <button id="add-tag-btn" 
+                                    class="flex items-center px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-md text-gray-700 transition-colors">
+                                    <span class="material-icons text-sm mr-1">add</span>添加标签
+                                </button>
+                                <div id="tag-dropdown" class="absolute left-0 mt-1 w-48 bg-white rounded-md shadow-lg border hidden z-10">
+                                    <div class="p-2">
+                                        <input type="text" id="tag-search" placeholder="搜索标签..." 
+                                            class="w-full px-2 py-1 text-sm border rounded-md mb-2">
+                                        <div id="tag-list" class="max-h-40 overflow-y-auto space-y-1">
+                                            <!-- 标签列表将通过JavaScript填充 -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="dropdown relative inline-block">
+                                <button id="export-btn" 
+                                    class="flex items-center px-3 py-1 bg-blue-500 hover:bg-blue-600 rounded-md text-white transition-colors">
+                                    <span class="material-icons text-sm mr-1">download</span>导出
+                                </button>
+                                <div id="export-dropdown" class="absolute left-0 mt-1 w-32 bg-white rounded-md shadow-lg border hidden z-10">
+                                    <a href="#" data-format="txt" class="export-link block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">文本文件 (.txt)</a>
+                                    <a href="#" data-format="md" class="export-link block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Markdown (.md)</a>
+                                    <a href="#" data-format="json" class="export-link block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">JSON (.json)</a>
+                                </div>
+                            </div>
+                            <!-- 新增删除按钮 -->
+                            <button id="delete-btn" 
+                                class="flex items-center px-3 py-1 bg-red-500 hover:bg-red-600 rounded-md text-white transition-colors">
+                                <span class="material-icons text-sm mr-1">delete</span>删除
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold text-gray-800">转录内容</h2>
+                    <div class="flex items-center space-x-2">
+                        <span id="transcription-engine" class="text-sm px-2 py-1 bg-blue-100 text-blue-800 rounded-md"></span>
+                        <span id="transcription-model" class="text-sm px-2 py-1 bg-blue-100 text-blue-800 rounded-md hidden"></span>
+                        <button id="edit-btn" class="text-sm flex items-center px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-md text-gray-700 transition-colors">
+                            <span class="material-icons text-sm mr-1">edit</span>编辑
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="transcription-content" class="prose max-w-none">
+                    <div class="loader-container flex justify-center items-center h-32">
+                        <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-10 w-10"></div>
+                    </div>
+                </div>
+                
+                <!-- 编辑转录内容的表单 -->
+                <div id="edit-form-container" class="mt-4 hidden">
+                    <textarea id="edit-transcription" rows="15" 
+                        class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                    <div class="flex justify-end space-x-2 mt-4">
+                        <button id="cancel-edit-btn" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-md text-gray-700 transition-colors">
+                            取消
+                        </button>
+                        <button id="save-edit-btn" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-md text-white transition-colors">
+                            保存
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- 关于页面模板 -->
+    <template id="about-template">
+        <div class="about-page">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h1 class="text-2xl font-bold text-gray-800 mb-4">关于 Bili2Text</h1>
+                <p class="text-gray-600 mb-4">
+                    Bili2Text 是一款功能强大的B站视频转录工具，可以将B站视频自动下载并转录为文字稿件，方便用户进行文字内容的检索、引用和二次创作。
+                </p>
+                
+                <h2 class="text-xl font-semibold text-gray-700 mt-6 mb-3">主要功能</h2>
+                <ul class="list-disc pl-5 space-y-2 text-gray-600">
+                    <li>自动下载B站视频并提取音频</li>
+                    <li>使用先进的AI模型（Whisper）进行语音识别转录</li>
+                    <li>支持多种导出格式：TXT、Markdown、JSON</li>
+                    <li>支持标签管理，方便分类和检索</li>
+                    <li>简洁现代的Web界面，方便使用</li>
+                </ul>
+                
+                <h2 class="text-xl font-semibold text-gray-700 mt-6 mb-3">转录引擎</h2>
+                <div class="space-y-4">
+                    <div class="bg-gray-50 p-4 rounded-md">
+                        <h3 class="font-medium text-gray-800">Whisper</h3>
+                        <p class="text-gray-600">
+                            OpenAI的Whisper是一个强大的语音识别模型，支持多种语言，包括中文。提供多种模型大小，从tiny到large，
+                            在速度和准确性上提供不同的平衡。
+                        </p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-md">
+                        <h3 class="font-medium text-gray-800">讯飞</h3>
+                        <p class="text-gray-600">
+                            科大讯飞提供的语音识别API，对中文支持特别优秀，需要提供相应的API密钥才能使用。
+                        </p>
+                    </div>
+                </div>
+                
+                <h2 class="text-xl font-semibold text-gray-700 mt-6 mb-3">项目信息</h2>
+                <div class="grid grid-cols-2 gap-4 text-gray-600">
+                    <div>
+                        <p><strong>版本:</strong> 1.0.0</p>
+                        <p><strong>开发者:</strong> Bili2Text团队</p>
+                    </div>
+                    <div>
+                        <p><strong>许可证:</strong> MIT</p>
+                        <p><strong>项目主页:</strong> <a href="https://github.com/example/bili2text" target="_blank" class="text-blue-500 hover:underline">GitHub</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- 底部版权信息 -->
+    <footer class="bg-white shadow-md mt-8 py-4">
+        <div class="container mx-auto px-4 text-center text-gray-600">
+            <p>&copy; 2023 Bili2Text. 保留所有权利。</p>
+        </div>
+    </footer>
+
+    <!-- 通知组件 -->
+    <div id="notification" class="fixed top-4 right-4 max-w-sm bg-white rounded-lg shadow-lg border-l-4 border-green-500 p-4 hidden z-50 transition-opacity duration-300">
+        <div class="flex items-start">
+            <div class="flex-shrink-0">
+                <span class="material-icons text-green-500" id="notification-icon">check_circle</span>
+            </div>
+            <div class="ml-3">
+                <h3 class="text-sm font-medium text-gray-900" id="notification-title">操作成功</h3>
+                <div class="mt-1 text-sm text-gray-500" id="notification-message">
+                    操作已成功完成。
+                </div>
+            </div>
+            <div class="ml-auto pl-3">
+                <div class="-mx-1.5 -my-1.5">
+                    <button class="inline-flex rounded-md p-1.5 text-gray-500 hover:text-gray-600 focus:outline-none" id="notification-close">
+                        <span class="material-icons text-sm">close</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 任务处理对话框 -->
+    <div id="task-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-lg shadow-lg p-6 max-w-md w-full">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">处理中...</h2>
+            <div class="text-gray-600 mb-4" id="task-status">正在下载视频，请耐心等待...</div>
+            <div class="relative pt-1 mb-4">
+                <div class="overflow-hidden h-2 text-xs flex rounded bg-gray-200">
+                    <div id="task-progress" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-blue-500 w-1/4 transition-all duration-300"></div>
+                </div>
+            </div>
+            <p class="text-sm text-gray-500">
+                视频处理可能需要几分钟时间，具体取决于视频长度和所选模型。
+            </p>
+        </div>
+    </div>
+
+    <!-- 确认对话框 -->
+    <div id="confirm-dialog" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-lg p-6 max-w-md w-full">
+            <h3 id="confirm-dialog-title" class="text-lg font-bold mb-2">确认操作</h3>
+            <p id="confirm-dialog-message" class="text-gray-700 mb-4">您确定要执行此操作吗？</p>
+            <div class="flex justify-end gap-2">
+                <button id="confirm-dialog-cancel" class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300">取消</button>
+                <button id="confirm-dialog-confirm" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">确认</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 自定义脚本 -->
+    <!-- <script src="/static/js/app.js"></script> -->
+    <script type="module" src="/static/js/main.js"></script>
+</body>
+</html>
