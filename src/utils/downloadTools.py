@@ -156,7 +156,7 @@ def download_video_yt_dlp(bv_number, output_dir=DOWNLOAD_DIR):
             video_url
         ] # TODO: 其实yt-dlp可以直接下载音频，但为了保持一致性，先不做特殊处理，还是从视频中分割
         
-        result = subprocess.run(command, capture_output=True, text=True)
+        result = subprocess.run(command, capture_output=False, text=True)
         
         if result.returncode != 0:
             log.error(f"下载失败: {result.stderr}")
