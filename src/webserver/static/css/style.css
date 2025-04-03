@@ -1,0 +1,506 @@
+/* Bili2Text Custom Styles */
+
+/* Global styles */
+:root {
+  --primary-color: #3b82f6;
+  --primary-hover: #2563eb;
+  --secondary-color: #64748b;
+  --text-color: #1f2937;
+  --light-text: #6b7280;
+  --border-color: #e5e7eb;
+  --background-light: #f9fafb;
+  --background-card: #ffffff;
+  --success-color: #10b981;
+  --error-color: #ef4444;
+  --warning-color: #f59e0b;
+}
+
+/* Global Adjustments */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  line-height: 1.6;
+  color: var(--text-color);
+}
+
+/* Smooth scrolling for the whole page */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom transitions */
+.transition-all {
+  transition: all 0.3s ease;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes slideIn {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.slide-in {
+  animation: slideIn 0.3s ease-in-out;
+}
+
+/* Card hover effects */
+.card-hover {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+}
+
+/* Video card layout */
+.video-card {
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: var(--background-card);
+}
+
+.video-card .thumbnail {
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  width: 100%;
+}
+
+.video-card .title {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  height: 2.8em;
+}
+
+@media (max-width: 640px) {
+  .video-card {
+    grid-template-columns: 1fr;
+  }
+  
+  .video-card-grid {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+  
+  .detail-page .flex {
+    flex-direction: column;
+  }
+  
+  .detail-page img {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+}
+
+/* Tag styles */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background-color: var(--background-light);
+  color: var(--secondary-color);
+  margin-right: 0.5rem;
+  margin-bottom: 0.5rem;
+  transition: all 0.2s;
+}
+
+.tag:hover {
+  background-color: var(--border-color);
+}
+
+.tag .material-icons {
+  font-size: 0.875rem;
+  margin-left: 0.25rem;
+  cursor: pointer;
+}
+
+.tag .tag-close {
+  margin-left: 0.25rem;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.tag .tag-close:hover {
+  opacity: 1;
+}
+
+/* 标签样式 */
+.tag-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  transition: background-color 0.2s;
+}
+
+.tag-badge .tag-remove {
+  margin-left: 0.25rem;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.tag-badge .tag-remove:hover {
+  opacity: 1;
+}
+
+/* Ripple effect */
+.ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple::after {
+  content: '';
+  position: absolute;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+  margin-top: -50px;
+  margin-left: -50px;
+  opacity: 0;
+  transition: all 0.6s ease-out;
+  transform: scale(0);
+}
+
+.ripple:active::after {
+  transform: scale(3);
+  opacity: 1;
+  transition: 0s;
+}
+
+/* Material Design 风格的按钮涟漪效果 */
+.btn-ripple {
+  position: relative;
+  overflow: hidden;
+  transform: translate3d(0, 0, 0);
+}
+
+.btn-ripple:after {
+  content: "";
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  background-image: radial-gradient(circle, #fff 10%, transparent 10.01%);
+  background-repeat: no-repeat;
+  background-position: 50%;
+  transform: scale(10, 10);
+  opacity: 0;
+  transition: transform .5s, opacity 1s;
+}
+
+.btn-ripple:active:after {
+  transform: scale(0, 0);
+  opacity: .3;
+  transition: 0s;
+}
+
+/* Navigation link active state */
+.nav-link.active {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+/* Status badges */
+.status-badge {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.status-badge.processing {
+  background-color: #fff9c4;
+  color: #f57f17;
+}
+
+.status-badge.completed {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status-badge.failed {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+/* Transcription content styling */
+.transcription-content {
+  white-space: pre-wrap;
+  font-size: 1rem;
+  line-height: 1.8;
+  color: var(--text-color);
+}
+
+.transcription-content p {
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+.timestamp {
+  display: inline-block;
+  color: var(--primary-color);
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-right: 0.5rem;
+  user-select: all;
+}
+
+/* 转录文本样式 */
+.transcription-text {
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+.transcription-text p {
+  margin-bottom: 1em;
+}
+
+/* Transcription segment */
+.transcript-segment {
+  padding: 8px 12px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.transcript-segment:hover {
+  background-color: #f3f4f6;
+}
+
+/* 转录卡片样式 */
+.transcription-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  flex-direction: column;
+}
+
+.transcription-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.transcript-card {
+  border-left: 4px solid var(--primary-color);
+}
+
+/* Transcription content styles */
+#transcription-content {
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+#transcription-content.editing {
+  display: none;
+}
+
+/* Notification styles */
+.notification-success {
+  border-left-color: var(--success-color);
+}
+
+.notification-error {
+  border-left-color: var(--error-color);
+}
+
+.notification-warning {
+  border-left-color: var(--warning-color);
+}
+
+/* Pagination button active state */
+.pagination-btn.active {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.pagination-item.active {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Dropdowns */
+.dropdown-content {
+  transform-origin: top;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  transform: scaleY(0);
+  opacity: 0;
+}
+
+.dropdown:hover .dropdown-content,
+.dropdown.active .dropdown-content {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.dropdown-content.show {
+  transform: scaleY(1);
+  opacity: 1;
+}
+
+/* Loading animation */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Notification slide-in animation */
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+#notification.show {
+  display: block;
+  animation: slideIn 0.3s ease forwards;
+}
+
+/* Progress animation for task processing */
+@keyframes progress-animation {
+  0% {
+    width: 5%;
+  }
+  20% {
+    width: 25%;
+  }
+  50% {
+    width: 65%;
+  }
+  80% {
+    width: 85%;
+  }
+  100% {
+    width: 95%;
+  }
+}
+
+.progress-animated {
+  animation: progress-animation 60s ease-in-out forwards;
+}
+
+/* Page transition effects */
+.page-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.page-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.page-exit {
+  opacity: 1;
+}
+
+.page-exit-active {
+  opacity: 0;
+  transition: opacity 300ms;
+}
+
+/* Disable animation for people who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* 响应式调整 */
+@media (max-width: 640px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .transcription-card {
+    flex-direction: column;
+  }
+  
+  .transcription-card img {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* Responsive design adjustments */
+@media (max-width: 768px) {
+  .hide-sm {
+    display: none;
+  }
+  
+  .video-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Dark mode adjustments for future use */
+.dark-mode-toggle {
+  cursor: pointer;
+}
+
+@media (prefers-color-scheme: dark) {
+  body.dark-mode {
+    --text-color: #f3f4f6;
+    --light-text: #d1d5db;
+    --border-color: #374151;
+    --background-light: #1f2937;
+    --background-card: #111827;
+  }
+}
