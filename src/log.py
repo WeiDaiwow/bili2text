@@ -8,7 +8,7 @@ from datetime import datetime
 
 # 配置日志格式
 LOG_FORMAT = "%(asctime)s [%(levelname)s] %(message)s"
-DATE_FORMAT = "%m.%d %H:%M:%S"
+DATE_FORMAT = "%m/%d %H:%M:%S"
 
 # 创建日志目录
 LOG_DIR = "logs"

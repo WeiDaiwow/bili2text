@@ -22,7 +22,7 @@ XUNFEI_SECRET_KEY = ""
 # Web服务器配置
 SERVER_HOST = "0.0.0.0"
 SERVER_PORT = 5000
-DEBUG_MODE = True
+DEBUG_MODE = False
 
 # 数据库配置
 DATABASE_PATH = f"{DATA_DIR}/bili2text.db"
