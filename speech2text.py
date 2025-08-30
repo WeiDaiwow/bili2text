@@ -1,5 +1,6 @@
-import whisper
 import os
+
+import whisper
 
 whisper_model = None
 
@@ -37,6 +38,6 @@ def run_analysis(filename, model="tiny", prompt="以下是普通话的句子。"
 
         with open(f"outputs/{filename}.txt", "a", encoding="utf-8") as f:
             f.write("".join([i["text"] for i in result["segments"] if i is not None]))
-            f.write("\n")
+            # f.write("\n")
         i += 1
     
